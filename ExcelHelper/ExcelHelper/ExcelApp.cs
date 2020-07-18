@@ -1,30 +1,89 @@
 ﻿using System;
 using System.Dynamic;
 using System.IO;
+using Microsoft.Office.Interop.Excel;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ExcelHelper
 {
     public class ExcelApp : IDisposable
     {
         private bool disposedValue;
-        public string FileName { protected set; get; }
 
-        public ExcelApp(string sFileName )
+        private Application excelApp { get; set; }
+        private List<ExcelWorkBook> excelWorkBooksList{ get; set; }
+        
+        public ExcelApp()
         {
-            FileName = sFileName;
+            InitClass();
         }
 
-        public bool DoesFileExist()
+        public void OpenWorkBook(string FileName)
         {
-            return System.IO.File.Exists(FileName);
+            excelWorkBooksList.Add(new ExcelWorkBook(excelApp, FileName));
         }
+
+        public void OpenWorkBookTemplate(string FileName,string TemplateFileName)
+        {
+            excelWorkBooksList.Add(new ExcelWorkBook(excelApp, FileName,TemplateFileName));
+        }
+
+
+        public void SaveWorkBooks()
+        {
+            var q = from wBooks in excelWorkBooksList
+                    select wBooks;
+            foreach(ExcelWorkBook wBook in q)
+            {
+                SaveWorkBook(wBook.FileName);
+            }
+
+        }
+        public void SaveWorkBook(string FileName)
+        {
+            var q = from wBooks in excelWorkBooksList
+                    where wBooks.FileName == FileName
+                    select wBooks;
+            q.FirstOrDefault<ExcelWorkBook>().Save();
+        }
+
+        protected void InitClass()
+        {
+            excelApp = new Application();
+            excelApp.Visible = false;
+            excelApp.DisplayAlerts = false;
+            excelWorkBooksList = new List<ExcelWorkBook>();
+        }
+        
+
+        protected void DisposeWorkBooks() {
+            foreach(ExcelWorkBook excelWorkBook in excelWorkBooksList)
+            {
+                excelWorkBook.Dispose(true);
+            }
+            
+        }
+        protected void DisposeApplication() 
+        {
+            if(excelApp!=null)
+            {
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(excelApp);
+                //excelApp = null;
+            }
+        }
+
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
+                DisposeWorkBooks();
+                DisposeApplication();
+
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -44,7 +103,12 @@ namespace ExcelHelper
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
+        ~ExcelApp()
+        {
+            this.Dispose(true);
+        }
+
     }
 }
