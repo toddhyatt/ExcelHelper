@@ -10,6 +10,7 @@ namespace ExcelHelper
     {
         public string WorkSheetName { get; set; }
         private Worksheet excelWorkSheet { get; set; }
+        internal List<ExcelRange> excelRanges { get; set; }
 
         public ExcelWorkSheet(Workbook excelWorkBook, string ExcelWorkSheetName)
         {
@@ -24,6 +25,9 @@ namespace ExcelHelper
                 excelWorkSheet = (Worksheet)excelWorkBook.Worksheets.Add();
                 excelWorkSheet.Name = WorkSheetName;
             }
+            excelRanges = new List<ExcelRange>();
+            excelRanges.Add(new ExcelRange(excelWorkSheet, excelWorkSheet.UsedRange.Address));
+
             
         }
 

@@ -12,7 +12,7 @@ namespace ExcelHelper
         private bool disposedValue;
 
         private Application excelApp { get; set; }
-        private List<ExcelWorkBook> excelWorkBooksList{ get; set; }
+        internal List<ExcelWorkBook> excelWorkBooksList { get; set; }
         
         public ExcelApp()
         {
@@ -46,6 +46,11 @@ namespace ExcelHelper
                     where wBooks.FileName == FileName
                     select wBooks;
             q.FirstOrDefault<ExcelWorkBook>().Save();
+        }
+
+        public System.Data.DataTable GetFirstOrDefault()
+        {
+            return excelWorkBooksList[0].ExcelWorkSheets[0].excelRanges[0].rangeDT;
         }
 
         protected void InitClass()

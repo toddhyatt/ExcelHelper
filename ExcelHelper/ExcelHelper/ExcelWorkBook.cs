@@ -5,7 +5,7 @@ using Microsoft.Office.Interop.Excel;
 
 namespace ExcelHelper
 {
-    internal class ExcelWorkBook:IDisposable
+    internal class ExcelWorkBook : IDisposable
     {
         private bool disposedValue;
 
@@ -14,19 +14,19 @@ namespace ExcelHelper
 
         public string TemplateFileName { protected set; get; }
 
-        public List<ExcelWorkSheet> ExcelWorkSheets { get; set; }
+        internal List<ExcelWorkSheet> ExcelWorkSheets { get; set; }
 
 
 
-        public ExcelWorkBook(Application app,string WorkBookFileName)
+        public ExcelWorkBook(Application app, string WorkBookFileName)
         {
             FileName = WorkBookFileName;
-            excelWorkBook=FileExists()?app.Workbooks.Open(FileName):app.Workbooks.Add();
+            excelWorkBook = FileExists() ? app.Workbooks.Open(FileName) : app.Workbooks.Add();
             initWorkSheets();
             excelWorkBook.Activate();
         }
 
-        public ExcelWorkBook(Application app, string WorkBookFileName,string TemplateName)
+        public ExcelWorkBook(Application app, string WorkBookFileName, string TemplateName)
         {
             FileName = WorkBookFileName;
             TemplateFileName = TemplateName;
@@ -38,9 +38,10 @@ namespace ExcelHelper
         private void initWorkSheets()
         {
             ExcelWorkSheets = new List<ExcelWorkSheet>();
-            foreach(Worksheet ws in excelWorkBook.Worksheets)
+            foreach (Worksheet ws in excelWorkBook.Worksheets)
             {
                 ExcelWorkSheets.Add(new ExcelWorkSheet(excelWorkBook, ws.Name));
+                break;
             }
         }
 
@@ -51,20 +52,33 @@ namespace ExcelHelper
 
         public void Save()
         {
-            excelWorkBook.SaveAs(FileName);
+            if (!IsReadOnly())
+                excelWorkBook.SaveAs(FileName);
+        }
+
+        public bool IsReadOnly()
+        {
+            bool retVal = false;
+            if (FileExists())
+            {
+                System.IO.File.GetAttributes(FileName).HasFlag(System.IO.FileAttributes.ReadOnly);
+                retVal = true;
+
+            }
+            return retVal;
         }
 
         protected void DisposeRanges() { }
-        protected void DisposeWorkSheets() 
+        protected void DisposeWorkSheets()
         {
-            foreach(ExcelWorkSheet ws in ExcelWorkSheets)
+            foreach (ExcelWorkSheet ws in ExcelWorkSheets)
             {
                 ws.Dispose(true);
-                
+
             }
         }
 
-        protected void DisposeWorkBook() 
+        protected void DisposeWorkBook()
         {
             excelWorkBook.Close();
             System.Runtime.InteropServices.Marshal.FinalReleaseComObject(excelWorkBook);
