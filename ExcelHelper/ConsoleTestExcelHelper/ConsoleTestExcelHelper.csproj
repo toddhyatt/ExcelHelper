@@ -50,6 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\InvoiceSLN\Invoice\Invoice.csproj">
+      <Project>{493e811f-8982-4ed8-abb0-05b440e8a311}</Project>
+      <Name>Invoice</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExcelHelper\ExcelHelper.csproj">
       <Project>{4c1eac16-fabb-4ee7-999f-a15547a6631c}</Project>
       <Name>ExcelHelper</Name>
