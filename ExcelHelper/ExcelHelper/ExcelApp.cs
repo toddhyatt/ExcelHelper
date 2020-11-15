@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Dynamic;
 using System.IO;
+using Microsoft.Office.Interop;
 using Microsoft.Office.Interop.Excel;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,50 @@ namespace ExcelHelper
             return excelWorkBooksList[0].ExcelWorkSheets[0].excelRanges[0].rangeDT;
         }
 
+        public string InsertRow(string workBookFilename,string sheetName,int RowBefore)
+        {
+            string retval = "";
+            int workBookIndex = GetWorkBookIndex(workBookFilename);
+            ExcelWorkBook wb = excelWorkBooksList[workBookIndex];
+            int workSheetIndex = GetWorkSheetIndex(wb, sheetName);
+            ExcelWorkSheet ws = wb.ExcelWorkSheets[workSheetIndex];
+            Worksheet theWS = ws.excelWorkSheet;
+            Range theRows = theWS.UsedRange.Rows;//[.Rows[1, 1];//.Rows[RowBefore, 1];
+            Range theRow = ((Range)theRows[RowBefore+1]).EntireRow;
+            if ((bool)theRow.Insert(XlDirection.xlDown, XlInsertFormatOrigin.xlFormatFromLeftOrAbove))
+            {
+                Range newRow = ((Range)theRows[RowBefore+1]).EntireRow;
+                retval = newRow.Address;
+            }
+
+            return retval;
+        }
+
+        public string UpdateRange(string workBookFilename, string sheetName,int row,int col, string value)
+        {
+            string retval = "";
+            int workBookIndex = GetWorkBookIndex(workBookFilename);
+            ExcelWorkBook wb = excelWorkBooksList[workBookIndex];
+            int workSheetIndex = GetWorkSheetIndex(wb, sheetName);
+            ExcelWorkSheet ws = wb.ExcelWorkSheets[workSheetIndex];
+            Worksheet theWS = ws.excelWorkSheet;
+            Range theRange = (Range)theWS.Cells[row, col];
+            theRange.Value = value;
+            retval = theRange.Address;
+            return retval;
+
+        }
+
+        private int GetWorkBookIndex(string workBookFileName)
+        {
+            int index = excelWorkBooksList.FindIndex(w => w.FileName == workBookFileName);
+            return index;
+        }
+        private int GetWorkSheetIndex(ExcelWorkBook wb,string workSheetName)
+        {
+            int index = wb.ExcelWorkSheets.FindIndex(w => w.WorkSheetName == workSheetName);
+            return index;
+        }
         protected void InitClass()
         {
             excelApp = new Application();

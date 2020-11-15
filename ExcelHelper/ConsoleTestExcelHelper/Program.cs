@@ -22,7 +22,7 @@ namespace ConsoleTestExcelHelper
         static void ProcessAllFiles()
         {
             string reportsFolder = @"C:\Users\toddh\OneDrive\villagegreenlandscapes\streetsmartreports";
-            foreach (string file in System.IO.Directory.GetFiles(reportsFolder))
+            foreach (string file in System.IO.Directory.GetFiles(reportsFolder,"*17*"))
             {
                 ProcessFile(file);
             }
@@ -146,7 +146,23 @@ namespace ConsoleTestExcelHelper
                         string JobId = "";
                         foreach (var columnName in columnNames)
                         {
-                            string columnValue = DataItem[ColCount].ToString().Replace(",", "_").Trim();
+                            string searchFor = ",";
+                            string replaceWith = "_";
+                            string[] equips;
+                            string[] equipRates;
+                            string columnValue;
+                            if (columnName.ToString().Contains("Equipment"))
+                            {
+                                columnValue= DataItem[ColCount].ToString().Trim();
+                            }
+                            else
+                            { 
+                               columnValue = DataItem[ColCount].ToString().Replace(searchFor, replaceWith).Trim();
+                            }
+                            equips = columnValue.Split(',');
+                            equipRates = new string[equips.Length];
+                            if (equips.Length > 1)
+                                System.Diagnostics.Trace.WriteLine(columnValue);
                             if (columnName.ToString() == "Job ID")
                                 JobId = columnValue;
                             if (columnName.ToString() == "Job Type Name")
@@ -205,7 +221,7 @@ namespace ConsoleTestExcelHelper
 
                                     }
                                     if (iEquipColumnNumber >= 0)
-                                    {
+                                    {   
                                         if (columnName.ToString().Contains("Haul"))
                                             System.Diagnostics.Trace.WriteLine(CurrentSub + ": Sub has Haul Data");
                                         EquipmentRate = int.Parse(getRates.FirstOrDefault()[iEquipColumnNumber].ToString());

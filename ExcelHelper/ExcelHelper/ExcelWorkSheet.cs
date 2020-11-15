@@ -9,7 +9,7 @@ namespace ExcelHelper
     internal class ExcelWorkSheet : IDisposable
     {
         public string WorkSheetName { get; set; }
-        private Worksheet excelWorkSheet { get; set; }
+        internal Worksheet excelWorkSheet { get; set; }
         internal List<ExcelRange> excelRanges { get; set; }
 
         public ExcelWorkSheet(Workbook excelWorkBook, string ExcelWorkSheetName)

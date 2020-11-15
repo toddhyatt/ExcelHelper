@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2D98FDEF-8822-4E4F-9C5F-7FD34F573B7E}</ProjectGuid>
+    <ProjectGuid>{9C945EE2-246D-43F6-A4ED-9085FF51F64F}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ConsoleTestExcelHelper</RootNamespace>
-    <AssemblyName>ConsoleTestExcelHelper</AssemblyName>
+    <RootNamespace>TestingUpdateWorksheet</RootNamespace>
+    <AssemblyName>TestingUpdateWorksheet</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
